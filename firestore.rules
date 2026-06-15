@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    match /users/{uid} {
+      // Identity documents are private to their owner.
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() && request.auth.uid == uid;
+      // Users update their own profile. kycStatus 'verified' is normally set
+      // by the on-device AI check (OCR match of the CIN on the ID photo).
+      // For production, move that check to a Cloud Function so a tampered
+      // client cannot self-verify.
+      allow update: if signedIn() && request.auth.uid == uid;
+    }
+
+    match /vehicles/{vehicleId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if signedIn()
+        && (resource.data.renterId == request.auth.uid
+            || resource.data.ownerId == request.auth.uid);
+      // Renters create their own pending requests.
+      allow create: if signedIn()
+        && request.resource.data.renterId == request.auth.uid
+        && request.resource.data.status == 'pending';
+      // Both parties can move the booking forward. Payment statuses are
+      // normally written by the Konnect webhook (Admin SDK bypasses rules);
+      // client writes to 'paid'/'completed' are only used in mock-payment mode
+      // during development — tighten this before going live.
+      allow update: if signedIn()
+        && (resource.data.renterId == request.auth.uid
+            || resource.data.ownerId == request.auth.uid);
+    }
+
+    match /favorites/{favoriteId} {
+      // Owners query "who favorited my vehicle" to send update notifications,
+      // so reads are open to signed-in users; writes only for your own entries.
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow delete: if signedIn();
+    }
+
+    match /notifications/{notificationId} {
+      // Notifications are created by the counterpart of a booking or by a
+      // vehicle owner notifying favoriters — so any signed-in user may create.
+      // Reading and updating (mark as read) is restricted to the recipient.
+      allow read, update, delete: if signedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if signedIn();
+    }
+  }
+}

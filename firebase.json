@@ -1,0 +1,32 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "rentgo-jeygm",
+          "appId": "1:751058856078:android:b1da935ca003912a39c1df",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "rentgo-jeygm",
+          "configurations": {
+            "android": "1:751058856078:android:b1da935ca003912a39c1df",
+            "ios": "1:751058856078:ios:34d7adc5494bd45e39c1df"
+          }
+        }
+      }
+    }
+  }
+}

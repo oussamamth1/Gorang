@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "751058856078",
+    "project_id": "rentgo-jeygm",
+    "storage_bucket": "rentgo-jeygm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751058856078:android:b1da935ca003912a39c1df",
+        "android_client_info": {
+          "package_name": "com.rentgo.rentgo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtcLUmtRIE-Gyc-O0CQyOWcl6TC_yW3wk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
